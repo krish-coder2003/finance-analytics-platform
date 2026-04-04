@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  title: Financial Management API
+  version: 1.0.0
+  description: "REST API for Managing Financial Transactions dynamically mapped to JSON Web Tokens securely!"
+servers:
+  - url: http://localhost:5000
+    description: Local Node Server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Record:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "6459f3d9d3753c1a2c2069e2"
+        amount:
+          type: number
+          example: 1540.50
+        type:
+          type: string
+          enum: [income, expense]
+        category:
+          type: string
+          example: "Salary"
+        date:
+          type: string
+          format: date
+        notes:
+          type: string
+          example: "Monthly paycheck"
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [Viewer, Analyst, Admin]
+        isActive:
+          type: boolean
+          
+security:
+  - bearerAuth: []
+
+paths:
+  /api/auth/login:
+    post:
+      summary: User Login
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          
+  /api/auth/register:
+    post:
+      summary: User Registration
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "201":
+          description: Created
+          
+  /api/records:
+    get:
+      summary: Get all records (Pagination & Search)
+      tags: [Records]
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create a new financial record
+      tags: [Records]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Record'
+      responses:
+        "201":
+          description: Record created
+          
+  /api/records/{id}:
+    patch:
+      summary: Edit a financial record
+      tags: [Records]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Record'
+      responses:
+        "200":
+          description: Record edited
+    delete:
+      summary: Delete a financial record
+      tags: [Records]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted (Masked)
+          
+  /api/dashboard:
+    get:
+      summary: Fetch Analytics & Math aggregations
+      tags: [Dashboard]
+      responses:
+        "200":
+          description: Math payloads for Frontend Charts
+          
+  /api/users:
+    get:
+      summary: Fetch User List
+      tags: [Users]
+      responses:
+        "200":
+          description: Array of users returned
