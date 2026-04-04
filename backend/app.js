@@ -38,17 +38,14 @@ app.use('/api/users', userRouter);
 app.use('/api/records', recordRouter);
 app.use('/api/dashboard', dashboardRouter);
 
-// Root Route (Sanity Check)
-app.get('/', (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'Financial Records API is running smoothly'
-  });
-});
+const path = require('path');
 
-// 3) UNHANDLED ROUTE CATCHER (404)
-app.use((req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+// React static serving
+app.use(express.static(path.join(__dirname, "build")));
+
+// React Fallback Route (Must be after APIs and Static files)
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 app.use(globalErrorHandler);
