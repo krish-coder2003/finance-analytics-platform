@@ -1,4 +1,3 @@
-app.set('trust proxy', 1);
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
@@ -15,6 +14,7 @@ const recordRouter = require('./routes/record.route');
 const dashboardRouter = require('./routes/dashboard.route');
 
 const app = express();
+app.set('trust proxy', 1);
 
 // 1) GLOBAL MIDDLEWARES
 app.use(cors({
