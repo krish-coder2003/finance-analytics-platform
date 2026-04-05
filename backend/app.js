@@ -18,7 +18,10 @@ app.set('trust proxy', 1);
 
 // 1) GLOBAL MIDDLEWARES
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://your-frontend-url.onrender.com'], // Add your deployed frontend URL here when ready
+  origin: [
+  'http://localhost:5173',
+  'https://finance-dashboard-42yv.onrender.com'
+], // Add your deployed frontend URL here when ready
   credentials: true
 }));
 
