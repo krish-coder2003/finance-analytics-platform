@@ -16,7 +16,10 @@ const dashboardRouter = require('./routes/dashboard.route');
 const app = express();
 
 // 1) GLOBAL MIDDLEWARES
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://your-frontend-url.onrender.com'], // Add your deployed frontend URL here when ready
+  credentials: true
+}));
 
 // Limit requests from same IP
 const limiter = rateLimit({
@@ -42,6 +45,11 @@ const path = require('path');
 
 // React static serving
 app.use(express.static(path.join(__dirname, "build")));
+
+// Unhandled API routes should return 404, not the React app
+app.use('/api', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
 
 // React Fallback Route (Must be after APIs and Static files)
 app.use((req, res) => {
